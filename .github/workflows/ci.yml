@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# CI only reads the repository; keep the token read-only.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
