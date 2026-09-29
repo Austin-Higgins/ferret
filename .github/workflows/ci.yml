@@ -47,7 +47,9 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project
-        run: xcodegen generate
+        run: |
+          xcodegen generate
+          defaults write com.apple.dt.Xcode IDEBuildingContinueBuildingAfterErrors -bool YES
       - name: Build app, tunnel and widgets
         run: |
           set -o pipefail
