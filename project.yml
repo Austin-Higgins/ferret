@@ -1,0 +1,138 @@
+# Generate the Xcode project with: xcodegen generate
+# Change FERRET_BUNDLE_PREFIX, DEVELOPMENT_TEAM and the App Group before building for a device.
+name: Ferret
+options:
+  bundleIdPrefix: com.example.ferret
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    FERRET_BUNDLE_PREFIX: com.example.ferret
+    FERRET_APP_GROUP: group.com.example.ferret
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+packages:
+  Ferret:
+    path: .
+targets:
+  Ferret:
+    type: application
+    platform: iOS
+    sources:
+      - path: App/Ferret
+      - path: App/Shared
+    dependencies:
+      - package: Ferret
+        product: FerretKit
+      - package: Ferret
+        product: FerretParsers
+      - target: FerretTunnel
+      - target: FerretWidgets
+    entitlements:
+      path: App/Ferret/Ferret.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        com.apple.security.application-groups: [$(FERRET_APP_GROUP)]
+        com.apple.developer.networking.wifi-info: true
+    info:
+      path: App/Ferret/Info.plist
+      properties:
+        CFBundleDisplayName: Ferret
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        NSSupportsLiveActivities: true
+        NSLocalNetworkUsageDescription: Safety Snoot looks for devices on this Wi-Fi that offer remote access or file sharing.
+        NSBonjourServices: [_ssh._tcp, _sftp-ssh._tcp, _rfb._tcp, _rdp._tcp, _telnet._tcp, _smb._tcp, _afpovertcp._tcp, _ftp._tcp, _http._tcp, _ipp._tcp, _airplay._tcp, _googlecast._tcp, _hap._tcp]
+        NSLocationWhenInUseUsageDescription: iOS only shares the Wi-Fi network's name and security type with apps that have location access. Ferret uses it for Safety Snoot and never stores your location.
+        FerretAppGroup: $(FERRET_APP_GROUP)
+        CFBundleAlternateIcons: {}
+        LSSupportsOpeningDocumentsInPlace: false
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.tcpdump.pcap
+            UTTypeDescription: Packet capture
+            UTTypeConformsTo: [public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [pcap, cap]
+          - UTTypeIdentifier: org.wireshark.pcapng
+            UTTypeDescription: Packet capture (pcapng)
+            UTTypeConformsTo: [public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [pcapng]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(FERRET_BUNDLE_PREFIX)
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: DiscreetIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ENABLE_PREVIEWS: YES
+
+  FerretTunnel:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: App/Tunnel
+    dependencies:
+      - package: Ferret
+        product: FerretKit
+      - package: Ferret
+        product: FerretParsers
+      - package: Ferret
+        product: FerretTunnelCore
+      - sdk: NetworkExtension.framework
+    entitlements:
+      path: App/Tunnel/FerretTunnel.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        com.apple.security.application-groups: [$(FERRET_APP_GROUP)]
+    info:
+      path: App/Tunnel/Info.plist
+      properties:
+        CFBundleDisplayName: Ferret Tunnel
+        FerretAppGroup: $(FERRET_APP_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.networkextension.packet-tunnel
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PacketTunnelProvider
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(FERRET_BUNDLE_PREFIX).tunnel
+
+  FerretWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: App/Widgets
+      - path: App/Shared
+    dependencies:
+      - package: Ferret
+        product: FerretKit
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: App/Widgets/FerretWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [$(FERRET_APP_GROUP)]
+    info:
+      path: App/Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Ferret
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(FERRET_BUNDLE_PREFIX).widgets
+
+schemes:
+  Ferret:
+    build:
+      targets:
+        Ferret: all
+        FerretTunnel: all
+        FerretWidgets: all
+    run:
+      config: Debug

@@ -51,3 +51,19 @@ import Testing
         #expect(report.findings.count == 1)
     }
 }
+
+@Suite struct X509Tests {
+    // Self-signed test certificate: /C=US/O=Ferret Test CA/CN=ferret.example
+    static let der = [UInt8](Data(base64Encoded: "MIIB0jCCAXmgAwIBAgIUXjq0jnxi4BpZTeaBn/oSFsCuTuEwCgYIKoZIzj0EAwIwPzELMAkGA1UEBhMCVVMxFzAVBgNVBAoMDkZlcnJldCBUZXN0IENBMRcwFQYDVQQDDA5mZXJyZXQuZXhhbXBsZTAeFw0yNjA5MjkwMzU5NDJaFw0yNjA5MzAwMzU5NDJaMD8xCzAJBgNVBAYTAlVTMRcwFQYDVQQKDA5GZXJyZXQgVGVzdCBDQTEXMBUGA1UEAwwOZmVycmV0LmV4YW1wbGUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQ/Kv7WroFt3icGiGsP8Dc2vcZikVdxOumFGKd3bGO1TR8jmOPWSt28GSzUipntDoPKxORyNPdmOrtUN3vf7gDHo1MwUTAdBgNVHQ4EFgQUqdHaampTS8qJm9oi5YBSOM5VqnswHwYDVR0jBBgwFoAUqdHaampTS8qJm9oi5YBSOM5VqnswDwYDVR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNHADBEAiAwOyDth3FuSQbcakmM0PM9HWzKBSHXey8srLQUb/QNggIgPHoOmXGYx+u6s1TR1pvolWb26SPo1xgRnkxSU7ZDC2s=")!)
+
+    @Test func readsIssuerAndSubject() throws {
+        let names = try X509Names(der: Self.der)
+        #expect(names.issuerOrganization == "Ferret Test CA")
+        #expect(names.issuerCommonName == "ferret.example")
+        #expect(names.subjectCommonName == "ferret.example")
+    }
+
+    @Test func rejectsGarbage() {
+        #expect(throws: (any Error).self) { try X509Names(der: [0x30, 0x05, 0x01]) }
+    }
+}

@@ -26,8 +26,10 @@ let package = Package(
             exclude: ["LICENSE", "PATCHES.md"],
             cSettings: [.define("FERRET_LWIP", to: "1"), .headerSearchPath("lwip-include")]
         ),
+        // Reads the system resolvers before the tunnel replaces them.
+        .target(name: "CFerretResolver", linkerSettings: [.linkedLibrary("resolv", .when(platforms: [.iOS, .macOS]))]),
         // Userspace TCP/IP forwarding used by the packet tunnel.
-        .target(name: "FerretTunnelCore", dependencies: ["CLwIP", "FerretParsers"]),
+        .target(name: "FerretTunnelCore", dependencies: ["CLwIP", "CFerretResolver", "FerretParsers"]),
         .testTarget(
             name: "FerretParsersTests",
             dependencies: ["FerretParsers"],
