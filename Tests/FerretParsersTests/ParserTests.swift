@@ -18,14 +18,16 @@ import Testing
         #expect(try r.readU16() == 0x1234)
     }
 
-    @Test(arguments: [
-        ([0x25] as [UInt8], UInt64(37)),
+    // Examples from RFC 9000 appendix A.1.
+    static let varInts: [([UInt8], UInt64)] = [
+        ([0x25], 37),
         ([0x7B, 0xBD], 15293),
         ([0x9D, 0x7F, 0x3E, 0x7D], 494_878_333),
         ([0xC2, 0x19, 0x7C, 0x5E, 0xFF, 0x14, 0xE8, 0x8C], 151_288_809_941_952_652),
-    ])
+    ]
+
+    @Test(arguments: varInts)
     func decodesQUICVarInts(bytes: [UInt8], value: UInt64) throws {
-        // Examples from RFC 9000 appendix A.1.
         var r = ByteReader(bytes)
         #expect(try r.readQUICVarInt() == value)
     }
