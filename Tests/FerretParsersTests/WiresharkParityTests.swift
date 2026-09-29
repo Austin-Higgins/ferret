@@ -26,7 +26,17 @@ import FerretParsers
                 }
             }
         }
-        #expect(mismatches.isEmpty, "\(mismatches.count) mismatches:\n\(mismatches.prefix(60).joined(separator: "\n"))")
+        // Summarise by field so one systematic difference doesn't hide the rest.
+        var byField: [String: [String]] = [:]
+        for m in mismatches {
+            let key = m.split(separator: " ")[2].dropLast()
+            byField[String(key), default: []].append(m)
+        }
+        let summary = byField.keys.sorted().map { key in
+            let items = byField[key]!
+            return "\(key): \(items.count) frames, e.g. " + items.prefix(3).joined(separator: " | ")
+        }
+        #expect(mismatches.isEmpty, "\(mismatches.count) mismatches in \(capture):\n\(summary.joined(separator: "\n"))")
     }
 
     /// Fields Wireshark derives from state a single-pass, on-device dissector

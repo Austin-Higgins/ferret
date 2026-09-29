@@ -1,0 +1,136 @@
+# Ferret seed tracker list. Written for Ferret and released under MIT with the app.
+# Format: domain<TAB>organisation<TAB>category
+# Categories: advertising, analytics, social, fingerprinting, crash-reporting, attribution
+# Matching covers subdomains. This is a starting point; see docs/tracker-lists.md
+# for how to swap in a larger, permissively licensed list.
+doubleclick.net	Google	advertising
+googleadservices.com	Google	advertising
+googlesyndication.com	Google	advertising
+google-analytics.com	Google	analytics
+googletagmanager.com	Google	analytics
+googletagservices.com	Google	advertising
+app-measurement.com	Google	analytics
+firebase-settings.crashlytics.com	Google	crash-reporting
+crashlytics.com	Google	crash-reporting
+admob.com	Google	advertising
+adservice.google.com	Google	advertising
+graph.facebook.com	Meta	social
+connect.facebook.net	Meta	social
+an.facebook.com	Meta	advertising
+facebook.net	Meta	social
+ads-api.tiktok.com	ByteDance	advertising
+analytics.tiktok.com	ByteDance	analytics
+business-api.tiktok.com	ByteDance	advertising
+log.byteoversea.com	ByteDance	analytics
+ads-twitter.com	X	advertising
+analytics.twitter.com	X	analytics
+ads.linkedin.com	Microsoft	advertising
+px.ads.linkedin.com	Microsoft	advertising
+bat.bing.com	Microsoft	advertising
+clarity.ms	Microsoft	analytics
+app-center.ms	Microsoft	crash-reporting
+in.appcenter.ms	Microsoft	analytics
+amazon-adsystem.com	Amazon	advertising
+adsafeprotected.com	Integral Ad Science	advertising
+moatads.com	Oracle	advertising
+criteo.com	Criteo	advertising
+criteo.net	Criteo	advertising
+taboola.com	Taboola	advertising
+outbrain.com	Outbrain	advertising
+adnxs.com	Xandr	advertising
+rubiconproject.com	Magnite	advertising
+pubmatic.com	PubMatic	advertising
+openx.net	OpenX	advertising
+casalemedia.com	Index Exchange	advertising
+smaato.net	Smaato	advertising
+inmobi.com	InMobi	advertising
+applovin.com	AppLovin	advertising
+applvn.com	AppLovin	advertising
+unityads.unity3d.com	Unity	advertising
+config.uca.cloud.unity3d.com	Unity	analytics
+vungle.com	Liftoff	advertising
+liftoff.io	Liftoff	advertising
+chartboost.com	Chartboost	advertising
+ironsrc.com	Unity	advertising
+ironsrc.mobi	Unity	advertising
+supersonicads.com	Unity	advertising
+mopub.com	AppLovin	advertising
+adcolony.com	Digital Turbine	advertising
+fyber.com	Digital Turbine	advertising
+mintegral.com	Mintegral	advertising
+rayjump.com	Mintegral	advertising
+pangle.io	ByteDance	advertising
+pangolin-sdk-toutiao.com	ByteDance	advertising
+appsflyer.com	AppsFlyer	attribution
+appsflyersdk.com	AppsFlyer	attribution
+adjust.com	Adjust	attribution
+adjust.world	Adjust	attribution
+branch.io	Branch	attribution
+app.link	Branch	attribution
+kochava.com	Kochava	attribution
+singular.net	Singular	attribution
+tenjin.io	Tenjin	attribution
+mixpanel.com	Mixpanel	analytics
+amplitude.com	Amplitude	analytics
+segment.io	Twilio Segment	analytics
+segment.com	Twilio Segment	analytics
+braze.com	Braze	analytics
+appboy.com	Braze	analytics
+onesignal.com	OneSignal	analytics
+flurry.com	Yahoo	analytics
+scorecardresearch.com	Comscore	analytics
+comscore.com	Comscore	analytics
+quantserve.com	Quantcast	analytics
+chartbeat.com	Chartbeat	analytics
+chartbeat.net	Chartbeat	analytics
+newrelic.com	New Relic	analytics
+nr-data.net	New Relic	analytics
+hotjar.com	Hotjar	analytics
+fullstory.com	FullStory	analytics
+mouseflow.com	Mouseflow	analytics
+heap.io	Heap	analytics
+heapanalytics.com	Heap	analytics
+kissmetrics.com	Kissmetrics	analytics
+pendo.io	Pendo	analytics
+uxcam.com	UXCam	analytics
+smartlook.com	Smartlook	analytics
+bugsnag.com	SmartBear	crash-reporting
+sentry.io	Sentry	crash-reporting
+instabug.com	Instabug	crash-reporting
+datadoghq.com	Datadog	analytics
+yandex.ru	Yandex	analytics
+mc.yandex.ru	Yandex	analytics
+appmetrica.yandex.net	Yandex	analytics
+startappservice.com	Start.io	advertising
+bidswitch.net	IPONWEB	advertising
+adsrvr.org	The Trade Desk	advertising
+demdex.net	Adobe	analytics
+omtrdc.net	Adobe	analytics
+2o7.net	Adobe	analytics
+everesttech.net	Adobe	advertising
+krxd.net	Salesforce	advertising
+exelator.com	Nielsen	advertising
+imrworldwide.com	Nielsen	analytics
+bluekai.com	Oracle	advertising
+rlcdn.com	LiveRamp	advertising
+agkn.com	Neustar	advertising
+mathtag.com	MediaMath	advertising
+tapad.com	Tapad	fingerprinting
+fingerprint.com	Fingerprint	fingerprinting
+fpjs.io	Fingerprint	fingerprinting
+iovation.com	TransUnion	fingerprinting
+threatmetrix.com	LexisNexis	fingerprinting
+online-metrix.net	LexisNexis	fingerprinting
+sift.com	Sift	fingerprinting
+tealiumiq.com	Tealium	analytics
+tiqcdn.com	Tealium	analytics
+optimizely.com	Optimizely	analytics
+launchdarkly.com	LaunchDarkly	analytics
+statsig.com	Statsig	analytics
+posthog.com	PostHog	analytics
+pinterest.com	Pinterest	social
+ct.pinterest.com	Pinterest	advertising
+sc-static.net	Snap	advertising
+tr.snapchat.com	Snap	advertising
+ads.reddit.com	Reddit	advertising
+redditmedia.com	Reddit	advertising

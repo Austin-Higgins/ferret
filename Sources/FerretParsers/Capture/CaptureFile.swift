@@ -30,6 +30,13 @@ public struct CaptureTimestamp: Hashable, Comparable, Sendable, Codable {
     }
 }
 
+/// Packet direction relative to the capturing device. Raw values match the
+/// pcapng `epb_flags` direction bits.
+public enum CaptureDirection: UInt8, Codable, Hashable, Sendable {
+    case inbound = 1
+    case outbound = 2
+}
+
 /// One captured frame.
 public struct CaptureRecord: Sendable {
     public var timestamp: CaptureTimestamp
@@ -38,10 +45,12 @@ public struct CaptureRecord: Sendable {
     public var interfaceID: Int
     public var linkType: LinkType
     public var comment: String?
+    public var direction: CaptureDirection?
 
     public init(
         timestamp: CaptureTimestamp, data: [UInt8], originalLength: Int? = nil,
-        interfaceID: Int = 0, linkType: LinkType = .raw, comment: String? = nil
+        interfaceID: Int = 0, linkType: LinkType = .raw, comment: String? = nil,
+        direction: CaptureDirection? = nil
     ) {
         self.timestamp = timestamp
         self.data = data
@@ -49,6 +58,7 @@ public struct CaptureRecord: Sendable {
         self.interfaceID = interfaceID
         self.linkType = linkType
         self.comment = comment
+        self.direction = direction
     }
 
     /// The IP datagram inside this frame, if any.

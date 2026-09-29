@@ -91,7 +91,9 @@ import Testing
     func writerRoundTrips(format: CaptureFormat) throws {
         let source = try Fixtures.records("dns.pcap")
         let raw = source.compactMap { r in
-            r.ipBytes.map { CaptureRecord(timestamp: r.timestamp, data: Array($0), linkType: .raw, comment: "note") }
+            r.ipBytes.map {
+                CaptureRecord(timestamp: r.timestamp, data: Array($0), linkType: .raw, comment: "note", direction: .outbound)
+            }
         }
         let data: Data = switch format {
         case .pcap: PcapWriter().file(raw)
@@ -104,7 +106,10 @@ import Testing
             #expect(a.data == b.data)
             #expect(a.timestamp == b.timestamp)
             #expect(b.linkType == .raw)
-            if format == .pcapng { #expect(b.comment == "note") }
+            if format == .pcapng {
+                #expect(b.comment == "note")
+                #expect(b.direction == .outbound)
+            }
         }
     }
 
@@ -189,7 +194,7 @@ import Testing
             stream += reassembler.accept(sequence: tcp.sequenceNumber, flags: tcp.flags, payload: tcp.payload)
         }
         let text = String(decoding: stream, as: UTF8.self)
-        let requestLines = text.components(separatedBy: "\r\n").filter { $0.hasSuffix("HTTP/1.1") }
+        let requestLines = text.components(separatedBy: .newlines).filter { $0.hasSuffix("HTTP/1.1") }
         #expect(requestLines == ["PUT /1 HTTP/1.1", "GET /2 HTTP/1.1", "PUT /3 HTTP/1.1", "PUT /4 HTTP/1.1", "PUT /5 HTTP/1.1"])
         #expect(reassembler.pendingBytes == 0)
     }

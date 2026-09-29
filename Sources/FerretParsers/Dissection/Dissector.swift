@@ -177,7 +177,7 @@ public enum Dissector {
             b.close()
         } else {
             b.open(label: "Internet Protocol Version 6", value: "Src: \(ip.source), Dst: \(ip.destination)", range: o..<(o + ip.headerLength))
-            b.leaf("ipv6.version", "Version", "6", o..<(o + 1))
+            b.leaf("ip.version", "Version", "6", o..<(o + 1))
             b.leaf("ipv6.tclass", "Traffic class", "0x" + pad(String(ip.trafficClass, radix: 16), 8), o..<(o + 2))
             b.leaf("ipv6.flow", "Flow label", "0x" + pad(String(ip.flowLabel ?? 0, radix: 16), 6), (o + 1)..<(o + 4))
             b.leaf("ipv6.plen", "Payload length", "\(ip.totalLength - 40)", (o + 4)..<(o + 6))

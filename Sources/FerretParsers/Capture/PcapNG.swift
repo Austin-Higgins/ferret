@@ -71,16 +71,22 @@ public enum PcapNGReader {
                 let data = try r.take(caplen)
                 r.offset += (4 - caplen % 4) % 4
                 var comment: String?
+                var direction: CaptureDirection?
                 if r.offset <= bodyEnd {
-                    for (code, value) in try options(&r, end: bodyEnd) where code == 1 {
-                        comment = String(decoding: value, as: UTF8.self)
+                    for (code, value) in try options(&r, end: bodyEnd) {
+                        if code == 1 {
+                            comment = String(decoding: value, as: UTF8.self)
+                        } else if code == 2, value.count == 4 {
+                            var f = EndianReader(bytes: value, offset: 0, littleEndian: littleEndian)
+                            direction = CaptureDirection(rawValue: UInt8(try f.u32() & 0x3))
+                        }
                     }
                 }
                 let iface = interfaces[ifaceID]
                 records.append(CaptureRecord(
                     timestamp: timestamp(tsHigh << 32 | tsLow, iface),
                     data: data, originalLength: origlen, interfaceID: ifaceID,
-                    linkType: iface.linkType, comment: comment))
+                    linkType: iface.linkType, comment: comment, direction: direction))
             case 0x0000_0003:
                 guard let iface = interfaces.first else { throw ParseError.malformed("SPB without IDB") }
                 let origlen = Int(try r.u32())
@@ -172,9 +178,16 @@ public struct PcapNGWriter: Sendable {
         body.appendU32LE(UInt32(max(record.originalLength, captured.count)))
         body += captured
         body += [UInt8](repeating: 0, count: (4 - captured.count % 4) % 4)
+        var options: [(UInt16, [UInt8])] = []
         if let comment = record.comment, !comment.isEmpty {
-            body += Self.options([(1, Array(comment.utf8))])
+            options.append((1, Array(comment.utf8)))
         }
+        if let direction = record.direction {
+            var flags: [UInt8] = []
+            flags.appendU32LE(UInt32(direction.rawValue))
+            options.append((2, flags))
+        }
+        body += Self.options(options)
         return Self.block(type: 6, body: body)
     }
 
