@@ -234,7 +234,7 @@ extension String {
     /// `0x1301`-style formatting, matching Wireshark's field output.
     public init(format4Hex v: UInt16) {
         let digits = String(v, radix: 16)
-        let zeros = String(repeating: "0", count: max(0, 4 - digits.count))
+        let zeros = String(repeating: "0", count: Swift.max(0, 4 - digits.count))
         self.init("0x" + zeros + digits)
     }
 }
