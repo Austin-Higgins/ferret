@@ -100,7 +100,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
 
     // MARK: - Setup
 
-    static func settings(resolvers: [IPAddress]) -> NEPacketTunnelNetworkSettings {
+    static func settings(resolvers: [FerretParsers.IPAddress]) -> NEPacketTunnelNetworkSettings {
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
 
         let v4 = NEIPv4Settings(addresses: [tunnelIPv4], subnetMasks: ["255.255.255.0"])

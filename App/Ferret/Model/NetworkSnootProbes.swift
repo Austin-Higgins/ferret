@@ -21,23 +21,23 @@ struct NetworkSnootProbes: SnootProbes {
                         continuation.resume(returning: status == EAI_NONAME ? .nameNotFound : .failed(String(cString: gai_strerror(status))))
                         return
                     }
-                    var addresses: [IPAddress] = []
+                    var addresses: [FerretParsers.IPAddress] = []
                     var cursor = result
                     while let info = cursor {
                         if let sa = info.pointee.ai_addr {
                             if info.pointee.ai_family == AF_INET {
                                 sa.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { sin in
-                                    withUnsafeBytes(of: sin.pointee.sin_addr) { addresses.append(IPAddress(bytes: $0)!) }
+                                    withUnsafeBytes(of: sin.pointee.sin_addr) { addresses.append(FerretParsers.IPAddress(bytes: $0)!) }
                                 }
                             } else if info.pointee.ai_family == AF_INET6 {
                                 sa.withMemoryRebound(to: sockaddr_in6.self, capacity: 1) { sin6 in
-                                    withUnsafeBytes(of: sin6.pointee.sin6_addr) { addresses.append(IPAddress(bytes: $0)!) }
+                                    withUnsafeBytes(of: sin6.pointee.sin6_addr) { addresses.append(FerretParsers.IPAddress(bytes: $0)!) }
                                 }
                             }
                         }
                         cursor = info.pointee.ai_next
                     }
-                    var seen = Set<IPAddress>()
+                    var seen = Set<FerretParsers.IPAddress>()
                     continuation.resume(returning: .addresses(addresses.filter { seen.insert($0).inserted }))
                 }
             }
