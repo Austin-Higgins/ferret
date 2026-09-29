@@ -78,23 +78,23 @@ public enum Dissector {
             if let context {
                 if let records = context.tlsRecords(ip: ip, tcp: tcp) {
                     var afterCCS = context.afterChangeCipherSpec(ip: ip, tcp: tcp)
-                    var tls13 = context.isTLS13(ip: ip, tcp: tcp)
+                    var version = context.tlsVersionState(ip: ip, tcp: tcp)
                     if let info = dissectTLS(records: records, payloadRange: p..<(p + payload.count), recordOffset: nil,
-                                             afterChangeCipherSpec: &afterCCS, isTLS13: &tls13, into: &b) {
+                                             afterChangeCipherSpec: &afterCCS, version: &version, into: &b) {
                         protocolName = "TLS"
                         summary = info
                     } else {
                         summary += " [TCP segment of a reassembled PDU]"
                     }
                     if afterCCS { context.setAfterChangeCipherSpec(ip: ip, tcp: tcp) }
-                    if tls13 { context.markTLS13(ip: ip, tcp: tcp) }
+                    context.setTLSVersionState(version, ip: ip, tcp: tcp)
                     break
                 }
             } else if TLS.looksLikeTLS(payload) {
                 var afterCCS = false
-                var tls13 = false
+                var version = TLSVersionState()
                 if let info = dissectTLS(records: TLS.records(in: payload), payloadRange: p..<(p + payload.count), recordOffset: p,
-                                         afterChangeCipherSpec: &afterCCS, isTLS13: &tls13, into: &b) {
+                                         afterChangeCipherSpec: &afterCCS, version: &version, into: &b) {
                     protocolName = "TLS"
                     summary = info
                 }
@@ -223,7 +223,7 @@ public enum Dissector {
     /// onto this frame's bytes; reassembled records get no byte ranges.
     static func dissectTLS(
         records: [TLSRecord], payloadRange: Range<Int>, recordOffset: Int?,
-        afterChangeCipherSpec: inout Bool, isTLS13: inout Bool, into b: inout TreeBuilder
+        afterChangeCipherSpec: inout Bool, version: inout TLSVersionState, into b: inout TreeBuilder
     ) -> String? {
         guard !records.isEmpty else { return nil }
         var infos: [String] = []
@@ -236,7 +236,7 @@ public enum Dissector {
             let length = 5 + record.fragment.count
             let typeName = contentTypeName(record.contentType)
             b.open(label: "TLS record", value: "\(TLS.versionName(record.version)) \(typeName)", range: range(0, length))
-            let opaque = isTLS13 && record.contentType == TLSContentType.applicationData.rawValue
+            let opaque = version.usesOpaqueRecords && record.contentType == TLSContentType.applicationData.rawValue
             b.leaf(opaque ? "tls.record.opaque_type" : "tls.record.content_type", "Content type", "\(record.contentType)", range(0, 1))
             b.leaf("tls.record.version", "Version", hex(record.version), range(1, 2))
             b.leaf("tls.record.length", "Length", "\(record.fragment.count)", range(3, 2))
@@ -253,7 +253,9 @@ public enum Dissector {
                     infos.append(handshakeName(type))
                     if type == .clientHello, let hello = try? TLSClientHello.parse(body: message.body) {
                         dissectClientHello(hello, into: &b)
+                        if hello.supportedVersions.contains(0x0304) { version.clientOffered13 = true }
                     } else if type == .serverHello, let hello = try? TLSServerHello.parse(body: message.body) {
+                        version.negotiated = hello.negotiatedVersion
                         b.leaf("tls.handshake.version", "Version", hex(hello.legacyVersion), nil)
                         b.leaf("tls.handshake.ciphersuite", "Cipher suite", hex(hello.cipherSuite), nil)
                         if hello.negotiatedVersion != hello.legacyVersion {
@@ -262,7 +264,6 @@ public enum Dissector {
                         if let alpn = hello.alpnProtocol {
                             b.leaf("tls.handshake.extensions_alpn_str", "ALPN protocol", alpn, nil)
                         }
-                        if hello.negotiatedVersion == 0x0304 { isTLS13 = true }
                     }
                     b.close()
                     m += 4 + message.body.count
@@ -476,6 +477,19 @@ extension String {
         var s = self
         while s.last == " " { s.removeLast() }
         return s
+    }
+}
+
+/// What a TLS connection has revealed about its version so far.
+struct TLSVersionState: Hashable {
+    var clientOffered13 = false
+    var negotiated: UInt16?
+
+    /// TLS 1.3 disguises every encrypted record as application data; like Wireshark,
+    /// assume 1.3 once the client offers it, until a ServerHello says otherwise.
+    var usesOpaqueRecords: Bool {
+        if let negotiated { return negotiated == 0x0304 }
+        return clientOffered13
     }
 }
 

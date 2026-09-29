@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(name: "FerretParsers", targets: ["FerretParsers"]),
         .library(name: "FerretKit", targets: ["FerretKit"]),
+        .library(name: "FerretTunnelCore", targets: ["FerretTunnelCore"]),
     ],
     targets: [
         // Protocol parsers and capture file formats. Written from scratch: no Wireshark code.
@@ -19,6 +20,14 @@ let package = Package(
             dependencies: ["FerretParsers", "CFerretAtomics"],
             resources: [.copy("Resources/public_suffix_list.dat"), .copy("Resources/trackers.tsv")]
         ),
+        // Vendored lwIP 2.2.1 (BSD) with Ferret's accept-any patches; see Sources/CLwIP/PATCHES.md.
+        .target(
+            name: "CLwIP",
+            exclude: ["LICENSE", "PATCHES.md"],
+            cSettings: [.define("FERRET_LWIP", to: "1")]
+        ),
+        // Userspace TCP/IP forwarding used by the packet tunnel.
+        .target(name: "FerretTunnelCore", dependencies: ["CLwIP", "FerretParsers"]),
         .testTarget(
             name: "FerretParsersTests",
             dependencies: ["FerretParsers"],
@@ -29,6 +38,7 @@ let package = Package(
             dependencies: ["FerretKit", "FerretParsers"],
             resources: [.copy("Fixtures")]
         ),
+        .testTarget(name: "FerretTunnelCoreTests", dependencies: ["FerretTunnelCore", "FerretParsers"]),
     ],
     swiftLanguageModes: [.v5]
 )

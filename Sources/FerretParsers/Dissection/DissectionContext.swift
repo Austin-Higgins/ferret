@@ -29,7 +29,7 @@ public final class DissectionContext {
     }
 
     private var streams: [Direction: StreamState] = [:]
-    private var tls13Connections: Set<Connection> = []
+    private var tlsVersions: [Connection: TLSVersionState] = [:]
     /// Streams with more buffered bytes than this stop being dissected as TLS.
     public var maxBufferedBytes = 128 * 1024
 
@@ -73,12 +73,12 @@ public final class DissectionContext {
         streams[direction(ip, tcp), default: StreamState()].afterChangeCipherSpec = true
     }
 
-    func isTLS13(ip: IPPacket, tcp: TCPSegment) -> Bool {
-        tls13Connections.contains(connection(ip, tcp))
+    func tlsVersionState(ip: IPPacket, tcp: TCPSegment) -> TLSVersionState {
+        tlsVersions[connection(ip, tcp)] ?? TLSVersionState()
     }
 
-    func markTLS13(ip: IPPacket, tcp: TCPSegment) {
-        tls13Connections.insert(connection(ip, tcp))
+    func setTLSVersionState(_ state: TLSVersionState, ip: IPPacket, tcp: TCPSegment) {
+        tlsVersions[connection(ip, tcp)] = state
     }
 
     private func direction(_ ip: IPPacket, _ tcp: TCPSegment) -> Direction {
