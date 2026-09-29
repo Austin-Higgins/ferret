@@ -1,0 +1,39 @@
+frame.len	ip.version	ip.hdr_len	ip.len	ip.id	ip.ttl	ip.proto	ip.checksum	ip.flags.df	ip.src	ip.dst	ipv6.plen	ipv6.nxt	ipv6.hlim	ipv6.src	ipv6.dst	ipv6.flow	tcp.srcport	tcp.dstport	tcp.seq_raw	tcp.ack_raw	tcp.hdr_len	tcp.flags	tcp.window_size_value	tcp.checksum	tcp.len	tcp.options.mss_val	tcp.options.wscale.shift	udp.srcport	udp.dstport	udp.length	udp.checksum	icmp.type	icmpv6.type	dns.id	dns.flags.response	dns.flags.opcode	dns.flags.rcode	dns.count.queries	dns.count.answers	dns.qry.name	dns.qry.type	dns.a	dns.aaaa	dns.cname	dns.resp.ttl	tls.record.content_type	tls.record.opaque_type	tls.record.version	tls.handshake.type	tls.handshake.version	tls.handshake.ciphersuite	tls.handshake.extensions_server_name	tls.handshake.extensions_alpn_str	tls.handshake.extensions.supported_version	quic.header_form	quic.long.packet_type	quic.version	quic.dcid	quic.scid	http.request.method	http.request.uri	http.host	http.response.code
+70	4	20	56	0x0000	64	17	0x6547	True	192.168.170.8	192.168.170.20																		32795	53	36	0x85ed			0x1032	False	0		1	0	google.com	16																						
+98	4	20	84	0xcbec	128	17	0x993e	False	192.168.170.20	192.168.170.8																		53	32795	64	0xc725			0x1032	True	0	0	1	1	google.com	16				270																		
+70	4	20	56	0x0000	64	17	0x6547	True	192.168.170.8	192.168.170.20																		32795	53	36	0x9eb0			0xf76f	False	0		1	0	google.com	15																						
+298	4	20	284	0xccbb	128	17	0x97a7	False	192.168.170.20	192.168.170.8																		53	32795	264	0xd6f3			0xf76f	True	0	0	1	6	google.com	15	216.239.37.26,64.233.167.25,66.102.9.25,216.239.57.25,216.239.37.25,216.239.57.26			552,552,552,552,552,552,600,600,600,600,600,600																		
+70	4	20	56	0x0000	64	17	0x6547	True	192.168.170.8	192.168.170.20																		32795	53	36	0x4c71			0x49a1	False	0		1	0	google.com	29																						
+70	4	20	56	0xcccd	128	17	0x9879	False	192.168.170.20	192.168.170.8																		53	32795	36	0xcbf0			0x49a1	True	0	0	1	0	google.com	29																						
+85	4	20	71	0x0000	64	17	0x6538	True	192.168.170.8	192.168.170.20																		32795	53	51	0x17c2			0x9bbb	False	0		1	0	104.9.192.66.in-addr.arpa	12																						
+129	4	20	115	0xcd1b	128	17	0x97f0	False	192.168.170.20	192.168.170.8																		53	32795	95	0x82b5			0x9bbb	True	0	0	1	1	104.9.192.66.in-addr.arpa	12				86309																		
+74	4	20	60	0x0000	64	17	0x6543	True	192.168.170.8	192.168.170.20																		32795	53	40	0xaf61			0x75c0	False	0		1	0	www.netbsd.org	1																						
+90	4	20	76	0xcff9	128	17	0x9539	False	192.168.170.20	192.168.170.8																		53	32795	56	0xa317			0x75c0	True	0	0	1	1	www.netbsd.org	1	204.152.190.12			82159																		
+74	4	20	60	0x6f4c	64	17	0xf5f6	True	192.168.170.8	192.168.170.20																		32795	53	40	0x3432			0xf0d4	False	0		1	0	www.netbsd.org	28																						
+102	4	20	88	0xd05a	128	17	0x94cc	False	192.168.170.20	192.168.170.8																		53	32795	68	0x5f1b			0xf0d4	True	0	0	1	1	www.netbsd.org	28		2001:4f8:4:7:2e0:81ff:fe52:9a6b		86400																		
+74	4	20	60	0x0000	64	17	0x6543	True	192.168.170.8	192.168.170.20																		32795	53	40	0xa5cd			0x7f39	False	0		1	0	www.netbsd.org	28																						
+102	4	20	88	0xd44f	128	17	0x90d7	False	192.168.170.20	192.168.170.8																		53	32795	68	0xd0f2			0x7f39	True	0	0	1	1	www.netbsd.org	28		2001:4f8:4:7:2e0:81ff:fe52:9a6b		86340																		
+74	4	20	60	0x0000	64	17	0x6543	True	192.168.170.8	192.168.170.20																		32795	53	40	0x8d69			0x8db3	False	0		1	0	www.google.com	28																						
+94	4	20	80	0xd46d	128	17	0x90c1	False	192.168.170.20	192.168.170.8																		53	32795	60	0x0dc1			0x8db3	True	0	0	1	1	www.google.com	28			www.l.google.com	633																		
+76	4	20	62	0x0000	64	17	0x6541	True	192.168.170.8	192.168.170.20																		32795	53	42	0x3d0a			0xdca2	False	0		1	0	www.l.google.com	28																						
+76	4	20	62	0xd539	128	17	0x9007	False	192.168.170.20	192.168.170.8																		53	32795	42	0xbc89			0xdca2	True	0	0	1	0	www.l.google.com	28																						
+75	4	20	61	0x0000	64	17	0x6542	True	192.168.170.8	192.168.170.20																		32795	53	41	0x8861			0xbc1f	False	0		1	0	www.example.com	28																						
+75	4	20	61	0xd69f	128	17	0x8ea2	False	192.168.170.20	192.168.170.8																		53	32795	41	0x07e1			0xbc1f	True	0	0	1	0	www.example.com	28																						
+79	4	20	65	0x0000	64	17	0x653e	True	192.168.170.8	192.168.170.20																		32795	53	45	0x4428			0x266d	False	0		1	0	www.example.notginh	28																						
+79	4	20	65	0xd72e	128	17	0x8e0f	False	192.168.170.20	192.168.170.8																		53	32795	45	0xbfa4			0x266d	True	0	3	1	0	www.example.notginh	28																						
+71	4	20	57	0x0000	64	17	0x6546	True	192.168.170.8	192.168.170.20																		32795	53	37	0x426e			0xfee3	False	0		1	0	www.isc.org	255																						
+115	4	20	101	0xd8f4	128	17	0x8c25	False	192.168.170.20	192.168.170.8																		53	32795	81	0xcb64			0xfee3	True	0	0	1	2	www.isc.org	255	204.152.184.88	2001:4f8:0:2::d		600,600																		
+82	4	20	68	0x0000	64	17	0x653b	True	192.168.170.8	192.168.170.20																		32796	53	48	0x0235			0x5a53	False	0		1	0	1.0.0.127.in-addr.arpa	12																						
+105	4	20	91	0xd8f5	128	17	0x8c2e	False	192.168.170.20	192.168.170.8																		53	32796	71	0xf930			0x5a53	True	0	0	1	1	1.0.0.127.in-addr.arpa	12				3600																		
+67	4	20	53	0x0000	64	17	0x654a	True	192.168.170.8	192.168.170.20																		32797	53	33	0x98bd			0x208a	False	0		1	0	isc.org	2																						
+129	4	20	115	0x87de	128	17	0x6a95	False	192.168.170.56	217.13.4.24																		1707	53	95	0x39f0			0x326e	False	0		1	0	_ldap._tcp.Default-First-Site-Name._sites.dc._msdcs.utelsystems.local	33																						
+166	4	20	152	0xd8f7	128	17	0x8bef	False	192.168.170.20	192.168.170.8																		53	32797	132	0x7bd8			0x208a	True	0	0	1	4	isc.org	2				3600,3600,3600,3600																		
+129	4	20	115	0x0000	58	17	0xf873	True	217.13.4.24	192.168.170.56																		53	1707	95	0xb56c			0x326e	True	0	3	1	0	_ldap._tcp.Default-First-Site-Name._sites.dc._msdcs.utelsystems.local	33																						
+98	4	20	84	0x87f0	128	17	0x6aa2	False	192.168.170.56	217.13.4.24																		1708	53	64	0x7c51			0xf161	False	0		1	0	_ldap._tcp.dc._msdcs.utelsystems.local	33																						
+98	4	20	84	0x0000	58	17	0xf892	True	217.13.4.24	192.168.170.56																		53	1708	64	0xf7cd			0xf161	True	0	3	1	0	_ldap._tcp.dc._msdcs.utelsystems.local	33																						
+140	4	20	126	0x87f1	128	17	0x6a77	False	192.168.170.56	217.13.4.24																		1709	53	106	0x7798			0x8361	False	0		1	0	_ldap._tcp.05b5292b-34b8-4fb7-85a3-8beef5fd2069.domains._msdcs.utelsystems.local	33																						
+140	4	20	126	0x0000	58	17	0xf868	True	217.13.4.24	192.168.170.56																		53	1709	106	0xf314			0x8361	True	0	3	1	0	_ldap._tcp.05b5292b-34b8-4fb7-85a3-8beef5fd2069.domains._msdcs.utelsystems.local	33																						
+83	4	20	69	0x87f5	128	17	0x6aac	False	192.168.170.56	217.13.4.24																		1710	53	49	0x1a8d			0xd060	False	0		1	0	GRIMM.utelsystems.local	1																						
+83	4	20	69	0x0000	58	17	0xf8a1	True	217.13.4.24	192.168.170.56																		53	1710	49	0x9609			0xd060	True	0	3	1	0	GRIMM.utelsystems.local	1																						
+83	4	20	69	0x87fb	128	17	0x6aa6	False	192.168.170.56	217.13.4.24																		1711	53	49	0x7489			0x7663	False	0		1	0	GRIMM.utelsystems.local	1																						
+83	4	20	69	0x0000	58	17	0xf8a1	True	217.13.4.24	192.168.170.56																		53	1711	49	0xf005			0x7663	True	0	3	1	0	GRIMM.utelsystems.local	1																						

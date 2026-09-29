@@ -1,0 +1,10 @@
+.build/
+.swiftpm/
+DerivedData/
+Ferret.xcodeproj/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+.DS_Store
+build.log
+test.log
+xcode.log
