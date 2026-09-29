@@ -24,8 +24,8 @@ public enum SafetySnoot {
         "www.cloudflare.com": ["Google Trust Services", "Let's Encrypt", "DigiCert", "Sectigo", "SSL.com", "Cloudflare"],
     ]
 
-    static let captivePortalURL = "http://captive.apple.com/hotspot-detect.html"
-    static let captivePortalBody = "<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"
+    public static let captivePortalURLString = "http://captive.apple.com/hotspot-detect.html"
+    public static let captivePortalBody = "<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"
 
     /// Service types that suggest remote access or file sharing on the local network.
     static let remoteAccessServices: [String: String] = [

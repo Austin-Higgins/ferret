@@ -50,7 +50,10 @@ targets:
         NSBonjourServices: [_ssh._tcp, _sftp-ssh._tcp, _rfb._tcp, _rdp._tcp, _telnet._tcp, _smb._tcp, _afpovertcp._tcp, _ftp._tcp, _http._tcp, _ipp._tcp, _airplay._tcp, _googlecast._tcp, _hap._tcp]
         NSLocationWhenInUseUsageDescription: iOS only shares the Wi-Fi network's name and security type with apps that have location access. Ferret uses it for Safety Snoot and never stores your location.
         FerretAppGroup: $(FERRET_APP_GROUP)
-        CFBundleAlternateIcons: {}
+        NSAppTransportSecurity:
+          NSExceptionDomains:
+            captive.apple.com:
+              NSExceptionAllowsInsecureHTTPLoads: true
         LSSupportsOpeningDocumentsInPlace: false
         UTImportedTypeDeclarations:
           - UTTypeIdentifier: com.tcpdump.pcap
