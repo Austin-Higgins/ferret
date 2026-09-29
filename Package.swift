@@ -18,7 +18,11 @@ let package = Package(
         .target(
             name: "FerretKit",
             dependencies: ["FerretParsers", "CFerretAtomics"],
-            resources: [.copy("Resources/public_suffix_list.dat"), .copy("Resources/trackers.tsv")]
+            resources: [
+                .copy("Resources/public_suffix_list.dat"),
+                .copy("Resources/trackers.tsv"),
+                .copy("Resources/iana-services.tsv"),
+            ]
         ),
         // Vendored lwIP 2.2.1 (BSD) with Ferret's accept-any patches; see Sources/CLwIP/PATCHES.md.
         .target(

@@ -1,28 +1,62 @@
-/// Common service names for well-known ports, from the IANA Service Name and
-/// Transport Protocol Port Number Registry (public data).
+import Foundation
+
+/// Service names for ports, from the full IANA Service Name and Transport
+/// Protocol Port Number Registry (public data, bundled as `iana-services.tsv`).
+/// A few friendlier names for ports that phones use heavily take precedence.
 public enum ServiceNames {
-    public static func name(port: UInt16, isUDP: Bool) -> String? {
-        if isUDP, let n = udp[port] { return n }
-        if !isUDP, let n = tcp[port] { return n }
-        return shared[port]
+    public struct Entry: Hashable, Sendable {
+        public var name: String
+        public var description: String
     }
 
-    static let shared: [UInt16: String] = [
-        7: "echo", 22: "ssh", 53: "domain", 80: "http", 123: "ntp", 143: "imap", 443: "https",
-        465: "submissions", 587: "submission", 853: "domain-s", 993: "imaps", 995: "pop3s",
-        1194: "openvpn", 1883: "mqtt", 3478: "stun", 3479: "stun", 5060: "sip", 5061: "sips",
-        5222: "xmpp-client", 5223: "apple-push", 5228: "google-push", 8080: "http-alt", 8443: "https-alt",
-        8883: "secure-mqtt",
+    public static func name(port: UInt16, isUDP: Bool) -> String? {
+        entry(port: port, isUDP: isUDP)?.name
+    }
+
+    public static func entry(port: UInt16, isUDP: Bool) -> Entry? {
+        if let friendly = overrides[port] { return friendly }
+        return registry.entries[Key(port: port, udp: isUDP)]
+    }
+
+    /// Number of registry rows loaded, for tests and the About screen.
+    public static var registryCount: Int { registry.entries.count }
+
+    struct Key: Hashable {
+        var port: UInt16
+        var udp: Bool
+    }
+
+    /// Ports where the registry name is misleading for phone traffic.
+    static let overrides: [UInt16: Entry] = [
+        5223: Entry(name: "apple-push", description: "Apple Push Notification service"),
+        5228: Entry(name: "google-push", description: "Firebase Cloud Messaging"),
+        853: Entry(name: "domain-s", description: "DNS over TLS or QUIC"),
     ]
 
-    static let tcp: [UInt16: String] = [
-        21: "ftp", 23: "telnet", 25: "smtp", 110: "pop3", 3389: "ms-wbt-server", 5900: "vnc",
-    ]
+    final class Registry: @unchecked Sendable {
+        let entries: [Key: Entry]
 
-    static let udp: [UInt16: String] = [
-        67: "dhcp-server", 68: "dhcp-client", 137: "netbios-ns", 161: "snmp", 500: "isakmp",
-        1900: "ssdp", 4500: "ipsec-nat-t", 5353: "mdns", 5355: "llmnr", 51820: "wireguard",
-    ]
+        init(tsv: String) {
+            var entries: [Key: Entry] = [:]
+            for line in tsv.split(separator: "\n") where !line.hasPrefix("#") {
+                let cols = line.split(separator: "\t", maxSplits: 3, omittingEmptySubsequences: false)
+                guard cols.count >= 3, let port = UInt16(cols[0]) else { continue }
+                let key = Key(port: port, udp: cols[1] == "udp")
+                if entries[key] == nil {
+                    entries[key] = Entry(name: String(cols[2]), description: cols.count > 3 ? String(cols[3]) : "")
+                }
+            }
+            self.entries = entries
+        }
+    }
+
+    static let registry: Registry = {
+        guard let url = Bundle.module.url(forResource: "iana-services", withExtension: "tsv"),
+              let text = try? String(contentsOf: url, encoding: .utf8) else {
+            return Registry(tsv: "")
+        }
+        return Registry(tsv: text)
+    }()
 }
 
 /// Domains Apple uses for its own services, for the "Hide Apple" filter.

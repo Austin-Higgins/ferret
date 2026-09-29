@@ -23,6 +23,9 @@ public final class SharedCaptureStatus: @unchecked Sendable {
         case segmentsWritten
         case bytesOnDisk
         case sessionID
+        /// The extension's physical memory footprint, sampled every second.
+        case memoryFootprint
+        case peakMemoryFootprint
     }
 
     public enum State: UInt64, Sendable {
@@ -93,7 +96,8 @@ public final class SharedCaptureStatus: @unchecked Sendable {
             packets: Int(load(.packets)), bytes: Int(load(.bytes)),
             connections: Int(load(.connections)), droppedPackets: Int(load(.droppedPackets)),
             startedAt: Self.date(load(.startedAtNanos)), lastPacketAt: Self.date(load(.lastPacketAtNanos)),
-            bytesOnDisk: Int(load(.bytesOnDisk)), sessionID: load(.sessionID))
+            bytesOnDisk: Int(load(.bytesOnDisk)), sessionID: load(.sessionID),
+            memoryFootprint: Int(load(.memoryFootprint)), peakMemoryFootprint: Int(load(.peakMemoryFootprint)))
     }
 
     static func nanos(_ date: Date) -> UInt64 {
@@ -116,11 +120,13 @@ public struct CaptureCounters: Hashable, Codable, Sendable {
     public var lastPacketAt: Date?
     public var bytesOnDisk: Int
     public var sessionID: UInt64
+    public var memoryFootprint: Int
+    public var peakMemoryFootprint: Int
 
     public init(
         state: SharedCaptureStatus.State = .idle, packets: Int = 0, bytes: Int = 0, connections: Int = 0,
         droppedPackets: Int = 0, startedAt: Date? = nil, lastPacketAt: Date? = nil, bytesOnDisk: Int = 0,
-        sessionID: UInt64 = 0
+        sessionID: UInt64 = 0, memoryFootprint: Int = 0, peakMemoryFootprint: Int = 0
     ) {
         self.state = state
         self.packets = packets
@@ -131,6 +137,8 @@ public struct CaptureCounters: Hashable, Codable, Sendable {
         self.lastPacketAt = lastPacketAt
         self.bytesOnDisk = bytesOnDisk
         self.sessionID = sessionID
+        self.memoryFootprint = memoryFootprint
+        self.peakMemoryFootprint = peakMemoryFootprint
     }
 }
 

@@ -201,5 +201,11 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         try? writer?.flush()
         status?.store(.lastPacketAtNanos, UInt64(Date().timeIntervalSince1970 * 1e9))
         status?.store(.bytesOnDisk, UInt64(writer?.bytesOnDisk ?? 0))
+        if let footprint = ProcessMemory.footprintBytes() {
+            status?.store(.memoryFootprint, UInt64(footprint))
+            if UInt64(footprint) > status?.load(.peakMemoryFootprint) ?? 0 {
+                status?.store(.peakMemoryFootprint, UInt64(footprint))
+            }
+        }
     }
 }

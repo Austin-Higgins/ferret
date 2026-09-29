@@ -184,3 +184,12 @@ func tcpPacket(
     }
 }
 #endif
+
+#if canImport(Darwin)
+@Suite struct ProcessMemoryTests {
+    @Test func readsFootprint() throws {
+        let bytes = try #require(ProcessMemory.footprintBytes())
+        #expect(bytes > 1024 * 1024)
+    }
+}
+#endif
