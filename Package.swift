@@ -24,7 +24,7 @@ let package = Package(
         .target(
             name: "CLwIP",
             exclude: ["LICENSE", "PATCHES.md"],
-            cSettings: [.define("FERRET_LWIP", to: "1")]
+            cSettings: [.define("FERRET_LWIP", to: "1"), .headerSearchPath("lwip-include")]
         ),
         // Userspace TCP/IP forwarding used by the packet tunnel.
         .target(name: "FerretTunnelCore", dependencies: ["CLwIP", "FerretParsers"]),
