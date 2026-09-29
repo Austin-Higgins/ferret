@@ -79,17 +79,21 @@ struct NetworkSnootProbes: SnootProbes {
             }
         }
         guard onWiFi else { return WiFiProbeResult(ssid: nil, security: .notOnWiFi) }
-        let network = await withTimeout(seconds: 3, fallback: nil) { await NEHotspotNetwork.fetchCurrent() }
-        guard let network else { return WiFiProbeResult(ssid: nil, security: .unknown) }
-        let security: WiFiSecurity
-        switch network.securityType {
-        case .open: security = .open
-        case .WEP: security = .wep
-        case .personal: security = .personal
-        case .enterprise: security = .enterprise
-        default: security = .unknown
+        // Needs the Wi-Fi info entitlement and location permission; otherwise iOS returns nil.
+        return await withTimeout(seconds: 3, fallback: WiFiProbeResult(ssid: nil, security: .unknown)) {
+            guard let network = await NEHotspotNetwork.fetchCurrent() else {
+                return WiFiProbeResult(ssid: nil, security: .unknown)
+            }
+            let security: WiFiSecurity
+            switch network.securityType {
+            case .open: security = .open
+            case .WEP: security = .wep
+            case .personal: security = .personal
+            case .enterprise: security = .enterprise
+            default: security = .unknown
+            }
+            return WiFiProbeResult(ssid: network.ssid, security: security)
         }
-        return WiFiProbeResult(ssid: network.ssid, security: security)
     }
 
     func bonjourServices() async -> [String: Int]? {

@@ -103,7 +103,7 @@ struct HexView: View {
         let pad = (16 - line.bytes.count) * 3 + (line.bytes.count <= 8 ? 1 : 0)
         out += AttributedString(String(repeating: " ", count: pad + 1))
         for (i, b) in line.bytes.enumerated() {
-            let ch = (0x20...0x7E).contains(b) ? String(UnicodeScalar(b)) : "."
+            let ch = (0x20...0x7E).contains(b) ? String(Character(UnicodeScalar(b))) : "."
             var a = AttributedString(ch)
             if let highlight, highlight.contains(line.offset + i) {
                 a.backgroundColor = .accentColor.opacity(0.3)

@@ -124,7 +124,7 @@ struct TipJarView: View {
                 ForEach(products) { product in
                     Button {
                         Task {
-                            if case .success(.verified(let transaction)) = try? await product.purchase() {
+                            if case .success(.verified(let transaction))? = try? await product.purchase() {
                                 await transaction.finish()
                                 thanks = true
                             }

@@ -7,6 +7,7 @@ struct SafetySnootView: View {
     @State private var report: SnootReport?
     @State private var running = false
     @State private var practice: PracticeScenario?
+    @State private var location = LocationPermission()
     @AppStorage(FerretSettings.Key.discreetMode, store: SharedContainer.defaults) private var discreet = false
     @Environment(CaptureController.self) private var capture
     @Environment(\.modelContext) private var modelContext
@@ -61,6 +62,7 @@ struct SafetySnootView: View {
     }
 
     private func run(practice scenario: PracticeScenario?) {
+        if scenario == nil { location.requestIfNeeded() }
         running = true
         practice = scenario
         Task {
