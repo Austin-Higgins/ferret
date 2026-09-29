@@ -14,6 +14,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
 
     private var tcp: TCPRelay?
     private var udp: UDPRelay?
+    private var icmp: ICMPRelay?
     private var router: PacketRouter?
     private var writer: CaptureSegmentWriter?
     private var status: SharedCaptureStatus?
@@ -74,6 +75,7 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
             self.housekeeping?.cancel()
             self.tcp?.stop()
             self.udp?.stop()
+            self.icmp?.stop()
             try? self.writer?.close()
             self.status?.store(.bytesOnDisk, UInt64(self.writer?.bytesOnDisk ?? 0))
             self.status?.state = .idle
@@ -134,7 +136,12 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         udp.start()
         self.tcp = tcp
         self.udp = udp
-        router = PacketRouter(tcp: tcp, udp: udp)
+        let icmp = ICMPRelay(queue: queue)
+        icmp.output = { [weak self] packet in self?.sendToPhone(packet) }
+        self.icmp = icmp
+        let router = PacketRouter(tcp: tcp, udp: udp)
+        router.icmp = { [weak icmp] ip in icmp?.input(ip: ip) ?? false }
+        self.router = router
 
         let timer = DispatchSource.makeTimerSource(queue: queue)
         timer.schedule(deadline: .now() + .seconds(1), repeating: .seconds(1))

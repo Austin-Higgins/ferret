@@ -101,6 +101,8 @@ public final class UDPRelay {
 public final class PacketRouter {
     public let tcp: TCPRelay
     public let udp: UDPRelay
+    /// Handles ping; returns false for packets it doesn't relay.
+    public var icmp: ((IPPacket) -> Bool)?
     public private(set) var droppedPackets = 0
 
     public init(tcp: TCPRelay, udp: UDPRelay) {
@@ -122,8 +124,10 @@ public final class PacketRouter {
                 return
             }
             udp.input(ip: ip, udp: datagram)
+        case IPProtocolNumber.icmp, IPProtocolNumber.icmpv6:
+            if icmp?(ip) != true { droppedPackets += 1 }
         default:
-            // ICMP and fragmented UDP can't be relayed without raw sockets.
+            // Fragmented UDP and other protocols can't be relayed without raw sockets.
             droppedPackets += 1
         }
     }

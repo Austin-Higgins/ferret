@@ -156,3 +156,31 @@ func tcpPacket(
         #expect(InternetChecksum.transportChecksum(source: reply.source, destination: reply.destination, protocolNumber: 17, segment: reply.payload) == 0)
     }
 }
+
+#if canImport(Darwin)
+@Suite struct ICMPRelayTests {
+    @Test func rebuildsEchoRepliesWithValidChecksums() throws {
+        let server = IPAddress("1.1.1.1")!
+        let phone = IPAddress("10.111.0.2")!
+        let reply: [UInt8] = [0, 0, 0, 0, 0x12, 0x34, 0x00, 0x01] + Array("ping".utf8)
+        let packet = ICMPRelay.packet(from: server, to: phone, icmp: reply, v6: false)
+        let ip = try IPPacket.parse(packet)
+        #expect(ip.source == server && ip.destination == phone)
+        #expect(ip.headerChecksumValid == true)
+        #expect(InternetChecksum.checksum(ip.payload) == 0)
+
+        let v6 = ICMPRelay.packet(from: IPAddress("2606:4700:4700::1111")!, to: IPAddress("fd66:6572:7265::2")!,
+                                  icmp: [129, 0, 0, 0, 0x12, 0x34, 0, 1], v6: true)
+        let ip6 = try IPPacket.parse(v6)
+        #expect(InternetChecksum.transportChecksum(source: ip6.source, destination: ip6.destination, protocolNumber: 58, segment: ip6.payload) == 0)
+    }
+
+    @Test func sockaddrRoundTrip() {
+        for text in ["192.0.2.1", "2001:db8::1"] {
+            var storage = sockaddr_storage()
+            _ = ICMPRelay.fill(&storage, address: IPAddress(text)!)
+            #expect(ICMPRelay.address(from: storage) == IPAddress(text))
+        }
+    }
+}
+#endif

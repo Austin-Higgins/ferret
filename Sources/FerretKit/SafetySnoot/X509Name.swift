@@ -9,7 +9,8 @@ public struct X509Names: Hashable, Sendable {
     public var subjectCommonName: String?
 
     public init(der: [UInt8]) throws {
-        var cert = try DERReader(der[...]).readElement(expecting: 0x30)
+        var outer = DERReader(der[...])
+        var cert = try outer.readElement(expecting: 0x30)
         var tbs = try cert.readElement(expecting: 0x30)
         if try tbs.peekTag() == 0xA0 { _ = try tbs.readAny() }  // version
         _ = try tbs.readAny()  // serialNumber
