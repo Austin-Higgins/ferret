@@ -6,6 +6,9 @@ struct SettingsView: View {
     @AppStorage(FerretSettings.Key.storageCapMB, store: SharedContainer.defaults) private var storageCapMB = FerretSettings.defaultStorageCapMB
     @AppStorage(FerretSettings.Key.discreetMode, store: SharedContainer.defaults) private var discreet = false
     @AppStorage(FerretSettings.Key.learnMode, store: SharedContainer.defaults) private var learnMode = true
+    @AppStorage(FerretSettings.Key.dnsFallback, store: SharedContainer.defaults) private var dnsFallback = true
+    @AppStorage(FerretSettings.Key.lastResolvers, store: SharedContainer.defaults) private var lastResolvers = ""
+    @AppStorage(FerretSettings.Key.lastResolversWereFallback, store: SharedContainer.defaults) private var lastWasFallback = false
     @Environment(CaptureController.self) private var capture
     @Environment(TrafficStore.self) private var store
     @Environment(\.modelContext) private var modelContext
@@ -51,6 +54,17 @@ struct SettingsView: View {
                     Text("For phones someone else may check: a neutral icon, plain wording, no mascot, and a quick-exit button on every screen.")
                 }
 
+                Section {
+                    LabeledContent("Last capture used", value: lastResolvers.isEmpty ? "Not captured yet" : lastResolvers)
+                    Toggle("Fall back to Cloudflare DNS", isOn: $dnsFallback)
+                } header: {
+                    Text("DNS during capture")
+                } footer: {
+                    Text(lastWasFallback
+                         ? "The last capture couldn't read this network's DNS servers, so lookups went to Cloudflare (1.1.1.1). Turn the fallback off to never send lookups to a third party; some lookups may then not be captured."
+                         : "Ferret keeps using this network's own DNS servers. Only if it can't read them does it use Cloudflare (1.1.1.1), which then sees the names your phone looks up. Takes effect on the next capture.")
+                }
+
                 Section("Privacy") {
                     Label(FerretCopy.localOnlyPromise, systemImage: "lock.iphone")
                     NavigationLink("How Ferret handles data") { PrivacyView() }
@@ -90,6 +104,7 @@ struct PrivacyView: View {
                 Text("Nothing leaves your iPhone.").font(.title3.weight(.semibold))
                 Text("Ferret captures traffic with a local VPN that runs entirely on this device. Traffic still goes straight to where your apps were sending it; Ferret doesn't route it through any server.")
                 Text("No accounts, analytics or telemetry. Captures are stored in Ferret's private storage, capped at the limit you choose, and deleted with one tap.")
+                Text("DNS lookups keep using your network's servers. If Ferret can't read them, it uses Cloudflare (1.1.1.1) instead, unless you turn that off under DNS during capture.")
                 Text("Ferret can't read encrypted content. It sees the names your phone looks up, which servers it connects to, and the unencrypted parts of each connection's setup.")
                 Text("Safety Snoot contacts a few well-known sites (Apple, Google, Cloudflare, Wikipedia and public DNS names) to test the network. It sends no personal data.")
             }

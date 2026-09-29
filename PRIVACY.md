@@ -6,6 +6,13 @@ Ferret is built so that nothing about you or your traffic leaves your iPhone.
 - **Traffic stays on its normal path.** Capture uses a VPN configuration that runs
   entirely on the device. Packets go straight to where your apps were sending them.
   Ferret doesn't route them through any server, and DNS keeps using your network's resolvers.
+- **One exception, which you can turn off:** if Ferret can't read your network's DNS
+  servers when a capture starts, it sends lookups to Cloudflare's public resolver
+  (1.1.1.1 and 2606:4700:4700::1111) so they can still be captured. Cloudflare then sees
+  the names your phone looks up, under
+  [its resolver privacy policy](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/).
+  Settings > DNS during capture shows which servers the last capture used and has a
+  switch to turn the fallback off.
 - **Captures stay on the device.** Packets are stored in Ferret's App Group container,
   capped at the size you choose, and can be deleted in one tap. They only leave the
   phone if you export them yourself.
