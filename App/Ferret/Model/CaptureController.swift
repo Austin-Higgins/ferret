@@ -21,6 +21,8 @@ final class CaptureController {
     private(set) var lostScent: String?
     private(set) var sessionID: String?
     private(set) var startedAt: Date?
+    /// Live bytes-per-second for the capture screen's graph.
+    private(set) var throughput = ThroughputSampler()
 
     let store: TrafficStore
     var modelContext: ModelContext?
@@ -78,6 +80,7 @@ final class CaptureController {
             let id = UUID().uuidString
             sessionID = id
             startedAt = Date()
+            throughput.reset()
             SharedContainer.defaults.set(id, forKey: "activeSessionID")
             try FileManager.default.createDirectory(at: SharedContainer.capturesURL, withIntermediateDirectories: true)
             await store.startFollowing(SharedContainer.captureDirectory(sessionID: id), name: "Live capture")
@@ -97,6 +100,21 @@ final class CaptureController {
             phase = .idle
             lostScent = Self.describe(error)
         }
+    }
+
+    /// Asks the tunnel to flush, then reads everything written so far. Used when a
+    /// result must include the last second of traffic (sniff test).
+    func refreshNow() async {
+        if let session = manager?.connection as? NETunnelProviderSession, phase == .capturing {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                do {
+                    try session.sendProviderMessage(Data("flush".utf8)) { _ in continuation.resume() }
+                } catch {
+                    continuation.resume()
+                }
+            }
+        }
+        await store.poll()
     }
 
     func stop() {
@@ -172,6 +190,9 @@ final class CaptureController {
     private func pollOnce() async {
         if let status = statusFile {
             counters = status.snapshot
+            if phase == .capturing {
+                throughput.add(bytes: counters.bytes, packets: counters.packets, at: Date())
+            }
             #if canImport(ActivityKit)
             if phase == .capturing { liveActivity.update(counters) }
             #endif
@@ -199,6 +220,7 @@ final class CaptureController {
                 file.packets = counters.packets
                 file.bytes = counters.bytes
                 file.connections = counters.connections
+                file.peakTunnelMemory = counters.peakMemoryFootprint
                 try? modelContext.save()
             }
         }

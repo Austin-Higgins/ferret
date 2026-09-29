@@ -44,7 +44,10 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
 
         // Read the real resolvers before our settings replace them.
         let detected = SystemResolvers.current().filter { !$0.isMulticast }
-        let resolvers = detected.isEmpty ? SystemResolvers.fallback : detected
+        let useFallback = detected.isEmpty && FerretSettings.dnsFallbackEnabled
+        let resolvers = useFallback ? SystemResolvers.fallback : detected
+        SharedContainer.defaults.set(resolvers.map(\.description).joined(separator: ", "), forKey: FerretSettings.Key.lastResolvers)
+        SharedContainer.defaults.set(useFallback, forKey: FerretSettings.Key.lastResolversWereFallback)
 
         setTunnelNetworkSettings(Self.settings(resolvers: resolvers)) { [weak self] error in
             guard let self else { return }
@@ -117,9 +120,12 @@ final class PacketTunnelProvider: NEPacketTunnelProvider {
         settings.ipv6Settings = v6
 
         // Same resolvers as before, so lookups are captured but answered unchanged.
-        let dns = NEDNSSettings(servers: resolvers.map(\.description))
-        dns.matchDomains = [""]
-        settings.dnsSettings = dns
+        // None known and fallback off: leave DNS to iOS (lookups may not be captured).
+        if !resolvers.isEmpty {
+            let dns = NEDNSSettings(servers: resolvers.map(\.description))
+            dns.matchDomains = [""]
+            settings.dnsSettings = dns
+        }
         settings.mtu = 1500
         return settings
     }

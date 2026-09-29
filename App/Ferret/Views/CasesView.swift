@@ -37,6 +37,16 @@ struct CasesView: View {
             }
         }
         .navigationTitle("Case files")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    CaptureDiffView()
+                } label: {
+                    Label("Compare", systemImage: "arrow.left.arrow.right")
+                }
+                .disabled(cases.count < 2)
+            }
+        }
     }
 }
 
@@ -56,6 +66,9 @@ struct CaseDetailView: View {
                 }
                 LabeledContent("Evidence", value: "\(file.packets.countText) packets")
                 LabeledContent("On disk", value: directory.totalBytes().bytesText)
+                if file.peakTunnelMemory > 0 {
+                    LabeledContent("Peak tunnel memory", value: file.peakTunnelMemory.bytesText)
+                }
                 if let verdict = file.snootVerdict.flatMap(SnootVerdict.init(rawValue:)) {
                     LabeledContent("Safety Snoot", value: verdict.title)
                 }

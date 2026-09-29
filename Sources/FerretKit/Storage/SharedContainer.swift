@@ -56,6 +56,17 @@ public struct FerretSettings: Sendable {
         public static let discreetMode = "discreetMode"
         public static let learnMode = "learnMode"
         public static let hideAppleByDefault = "hideAppleByDefault"
+        /// Use Cloudflare's public DNS when the network's resolvers can't be read.
+        public static let dnsFallback = "dnsFallback"
+        /// Written by the tunnel: the resolvers the last capture used, comma-separated.
+        public static let lastResolvers = "lastResolvers"
+        public static let lastResolversWereFallback = "lastResolversWereFallback"
+    }
+
+    /// On by default; see PRIVACY.md. Off means lookups may bypass the capture
+    /// when the network's resolvers can't be read, but none go to a third party.
+    public static var dnsFallbackEnabled: Bool {
+        SharedContainer.defaults.object(forKey: Key.dnsFallback) as? Bool ?? true
     }
 
     public static let storageCapChoicesMB = [64, 128, 256, 512, 1024, 2048]

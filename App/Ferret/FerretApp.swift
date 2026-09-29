@@ -12,7 +12,7 @@ struct FerretApp: App {
         let store = TrafficStore()
         _store = State(initialValue: store)
         _capture = State(initialValue: CaptureController(store: store))
-        container = try! ModelContainer(for: CaseFile.self)
+        container = try! ModelContainer(for: CaseFile.self, SniffTestRecord.self)
         FerretShortcuts.updateAppShortcutParameters()
     }
 
