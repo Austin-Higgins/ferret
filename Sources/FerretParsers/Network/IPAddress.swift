@@ -165,3 +165,18 @@ public enum IPAddress: Hashable, Sendable, Comparable, CustomStringConvertible {
         return bytes + tailV4
     }
 }
+
+extension IPAddress: Codable {
+    public init(from decoder: Decoder) throws {
+        let text = try decoder.singleValueContainer().decode(String.self)
+        guard let address = IPAddress(text) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Invalid IP address \(text)"))
+        }
+        self = address
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(description)
+    }
+}

@@ -21,6 +21,17 @@ jobs:
       - name: Toolchain
         run: swift --version
       - name: Build
-        run: swift build --build-tests
+        run: |
+          set -o pipefail
+          swift build --build-tests 2>&1 | tee build.log
       - name: Test
-        run: swift test --skip-build
+        run: |
+          set -o pipefail
+          swift test --skip-build 2>&1 | tee test.log
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "==== Compiler errors ===="
+          grep -E "error:" build.log 2>/dev/null | sed -E 's#^/Users/runner/work/ferret/ferret/##' | sort -u | head -80 || true
+          echo "==== Test failures ===="
+          grep -E "✘|↳|Expectation failed|Issue recorded" test.log 2>/dev/null | grep -v "^.*✘ Suite" | cut -c1-600 | head -120 || true
